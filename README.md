@@ -1,24 +1,108 @@
-# Single-Phase-Inverter-with-PWM-Control
-O mesmo circuito inversor monofásico estudado anteriormente está sendo usado nesse caso. Porém, agora estaremos utilizando o método PWM para controlar nosso circuito.
-Dessa forma, o circuito conta com 4 MOSFETS tipo N, uma fonte cc de 5V e a carga uma resistência de 10kohm.
-Para compor o circuito de controle PWM, foi também utilizado outros tipos de circuito como o buffer, amplificador operacional com ganho unitário e comparador.
-Todos esses artifícios serão detalhados abaixo.
+# ⚡ Single-Phase Inverter with PWM Control
 
-#imagem circuito
+Este projeto é uma continuação do estudo anterior sobre inversores monofásicos. Agora, o mesmo circuito H-Bridge será analisado com a adição do controle por modulação por largura de pulso (PWM).
 
-#imagem ondas
+---
 
-# Controle PWM
-Para construirmos um controle PWM para o circuito inversor, em resumo pode ser utilizado 2 comparadores e 3 fontes tensão: Vp1, Vp2 e Vc.
+## 🔧 Componentes do Circuito
 
-#imagem circuito resumido
+O circuito é composto por:
 
-Vp1 e Vp2 são as portadoras e Vc é a tensão de controle.
-Dessa forma, o comparador irá sobrepor a onda Vc nas ondas Vp1 e Vp2, e no ponto em que Vc cruzar essas ondas, ele irá ligar ou desligar sua saída.
-No circuito construído no LTspice, Vc foi definida com 10Vcc e Vp1 e Vp2 com 24V pico a pico (sendo Vp2 o inverso de Vp1). Nota-se que para inverter a forma de onda de Vp2, foi utilizado o circuito amp op inversor.]
-#imagem Vp1Vp2_onda, Vc
+- 4 transistores MOSFET tipo N;
+- Fonte de tensão contínua de 5 V;
+- Carga resistiva de 10 kΩ;
+- Fontes de controle PWM;
+- Buffers e amplificadores operacionais.
 
-# Amplificador Operacional Inversor Unitário
+![Circuito completo](caminho-da-imagem)
 
-(citar caract gerais) ...
-A escolha dos valores de resistorem iguais (Vr1=Vr2=10kohm) foi com o intuito do ganho ser unitário, e assim Vp1 e Vp2 possuírem o mesmo Vpp. Dessa forma, nosso amp op irá inverter a polaridade do sinal mantendo sua magnitude.
+---
+
+## 📈 Forma de Onda da Carga
+
+A simulação foi feita no LTspice. Abaixo, é possível observar a forma de onda da tensão sobre a carga resistiva:
+
+![Forma de onda da carga](caminho-da-imagem)
+
+---
+
+## 🎛️ Controle PWM
+
+Para controlar o inversor com PWM, utilizamos:
+
+- 2 comparadores;
+- 3 fontes de tensão: `Vp1`, `Vp2` e `Vc`.
+
+![Circuito PWM resumido](caminho-da-imagem)
+
+- `Vp1` e `Vp2` são as portadoras (dente de serra), sendo `Vp2` o inverso de `Vp1`;
+- `Vc` é a tensão de controle (constante de 10 V).
+
+O comparador ativa sua saída sempre que `Vc` ultrapassa o valor instantâneo de `Vp1` ou `Vp2`.
+
+---
+
+## 🔁 Amplificador Operacional Inversor (Ganho Unitário)
+
+Para garantir que `Vp1` e `Vp2` tenham o mesmo valor eficaz (Vrms), foi utilizado um amplificador operacional inversor com ganho unitário.
+
+- Resistores utilizados: `R1 = R2 = 10 kΩ`.
+- Resultado: inversão da forma de onda sem alterar sua magnitude.
+
+![Amp Op inversor](caminho-da-imagem)
+
+---
+
+## ⚖️ Amplificador Operacional Comparador
+
+A comparação entre `Vc` e as portadoras `Vp1` e `Vp2` é feita por meio de comparadores com amplificadores operacionais.
+
+- Quando `Vc > Vp1` → saída do comparador é alta;
+- Quando `Vc < Vp1` → saída do comparador é baixa;
+- O mesmo ocorre com `Vp2`.
+
+Este é o princípio da geração dos pulsos PWM utilizados para acionar os MOSFETs do inversor.
+
+![Ondas Vp1, Vp2, Vc](caminho-da-imagem)
+
+---
+
+## 🧱 Buffer
+
+Foi utilizado um buffer (seguidor de tensão) na saída dos comparadores com o objetivo de garantir o isolamento e a integridade dos sinais antes de acionar os MOSFETs.
+
+Esse componente serve para:
+
+- Evitar que o circuito de controle seja afetado pela carga dos MOSFETs;
+- Preservar a forma do sinal de controle;
+- Proporcionar **alta impedância de entrada** e **baixa impedância de saída**, características fundamentais para acoplamento eficiente entre estágios.
+
+O uso do buffer assegura que os sinais PWM cheguem aos transistores de forma estável e sem distorções.
+
+## 🔍 Queda na Tensão Efetiva (Vrms)
+
+No circuito anterior (sem controle PWM), a tensão eficaz na carga era aproximadamente **5 V**, valor esperado dada a fonte DC de **5 V** e o acionamento direto dos MOSFETs.
+
+Com a introdução do controle **PWM (Pulse Width Modulation)**, a forma de onda da tensão na carga deixou de ser constante e passou a ter pulsos periódicos. Isso significa que a energia média entregue à carga foi reduzida, refletindo diretamente em uma **queda no valor eficaz da tensão (Vrms)**.
+
+Na simulação atual, com o PWM ativo e um período de **16 ms**, a tensão eficaz medida na carga foi de aproximadamente **4.07 V**. Essa diferença ocorre devido ao tempo em que o sinal permanece em nível baixo durante o ciclo (tempo desligado), reduzindo a área sob a curva da tensão ao longo do tempo.
+
+Esse comportamento é esperado e está diretamente relacionado ao **fator de condução** (ou duty cycle) aplicado no PWM. Quanto menor o tempo em que o sinal permanece em nível alto (Ton), **menor será o valor eficaz da tensão** na carga.
+
+> Ou seja, a queda na Vrms é uma consequência natural e controlada do uso do PWM — técnica essencial para ajustar a potência fornecida à carga sem alterar a tensão da fonte.
+
+
+
+## 📌 Observações
+
+- O uso da técnica PWM permite controlar a tensão RMS na carga variando o tempo de condução dos MOSFETs;
+- Um valor maior de tempo "ligado" (maior duty cycle) resulta em maior tensão RMS na carga;
+- O circuito foi simulado utilizando LTspice com uma frequência de comutação de 50 Hz.
+
+---
+
+## 📎 Conclusão
+
+O controle por PWM se mostrou eficaz para modular a tensão de saída do inversor monofásico. O circuito apresentado é uma base importante para o estudo de formas de onda, harmônicos e eficiência de conversão em inversores de potência.
+
+
