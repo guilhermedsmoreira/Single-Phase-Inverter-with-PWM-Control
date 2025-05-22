@@ -14,15 +14,17 @@ O circuito é composto por:
 - Fontes de controle PWM;
 - Buffers e amplificadores operacionais.
 
-![Circuito completo](caminho-da-imagem)
+![Circuito completo](Circuit_complet.png)
 
 ---
 
 ## 📈 Forma de Onda da Carga
 
-A simulação foi feita no LTspice. Abaixo, é possível observar a forma de onda da tensão sobre a carga resistiva:
+A simulação foi feita no LTspice. Abaixo, é possível observar a forma de onda da tensão e corrente sobre a carga resistiva:
 
-![Forma de onda da carga](caminho-da-imagem)
+![Forma de onda da carga](Wave_load_voltage.png)
+![Forma de onda da carga](Wave_load_current.png)
+
 
 Podemos notar que tanto a onda de tensão e corrente possuem o mesmo formato justamente pela carga em análise ser puramente resistiva.
 
@@ -30,7 +32,7 @@ No circuito anterior (sem controle PWM), a tensão eficaz na carga era aproximad
 
 Com a introdução do controle **PWM (Pulse Width Modulation)**, a forma de onda da tensão na carga deixou de ser constante e passou a ter pulsos periódicos. Isso significa que a energia média entregue à carga foi reduzida, refletindo diretamente em uma **queda no valor eficaz da tensão (Vrms)**.
 
-Na simulação atual, com o PWM ativo e um período de **16 ms**, a tensão eficaz medida na carga foi de aproximadamente **4.07 V**. Essa diferença ocorre devido ao tempo em que o sinal permanece em nível baixo durante o ciclo (tempo desligado), reduzindo a área sob a curva da tensão ao longo do tempo.
+Na simulação atual, a tensão eficaz medida na carga foi de aproximadamente **4.07 V**. Essa diferença ocorre devido ao tempo em que o sinal permanece em nível baixo durante o ciclo (tempo desligado), reduzindo a área sob a curva da tensão ao longo do tempo.
 
 Esse comportamento é esperado e está diretamente relacionado ao **fator de condução** (ou duty cycle) aplicado no PWM. Quanto menor o tempo em que o sinal permanece em nível alto (Ton), **menor será o valor eficaz da tensão** na carga.
 
@@ -43,9 +45,6 @@ Para controlar o inversor com PWM, utilizamos:
 
 - 2 comparadores;
 - 3 fontes de tensão: `Vp1`, `Vp2` e `Vc`.
-
-![Circuito PWM resumido](caminho-da-imagem)
-
 - `Vp1` e `Vp2` são as portadoras (dente de serra), sendo `Vp2` o inverso de `Vp1`;
 - `Vc` é a tensão de controle (constante de 10 V).
 
@@ -61,7 +60,7 @@ Para garantir que `Vp1` e `Vp2` tenham o mesmo valor eficaz (Vrms), foi utilizad
 - Resistores utilizados: `R1 = R2 = 10 kΩ`.
 - Resultado: inversão da forma de onda sem alterar sua magnitude.
 
-![Amp Op inversor](caminho-da-imagem)
+![Amp Op inversor](Wave_Vp1_Vp2.png)
 
 ---
 
@@ -75,7 +74,7 @@ A comparação entre `Vc` e as portadoras `Vp1` e `Vp2` é feita por meio de com
 
 Este é o princípio da geração dos pulsos PWM utilizados para acionar os MOSFETs do inversor.
 
-![Ondas Vp1, Vp2, Vc](caminho-da-imagem)
+![Ondas Vp1, Vp2, Vc](Wave_Vp1_Vp2_Vc.png)
 
 ---
 
