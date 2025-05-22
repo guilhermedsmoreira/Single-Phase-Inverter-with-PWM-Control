@@ -24,6 +24,17 @@ A simulação foi feita no LTspice. Abaixo, é possível observar a forma de ond
 
 ![Forma de onda da carga](caminho-da-imagem)
 
+Podemos notar que tanto a onda de tensão e corrente possuem o mesmo formato justamente pela carga em análise ser puramente resistiva.
+
+No circuito anterior (sem controle PWM), a tensão eficaz na carga era aproximadamente **5 V**, valor esperado dada a fonte DC de **5 V** e o acionamento direto dos MOSFETs.
+
+Com a introdução do controle **PWM (Pulse Width Modulation)**, a forma de onda da tensão na carga deixou de ser constante e passou a ter pulsos periódicos. Isso significa que a energia média entregue à carga foi reduzida, refletindo diretamente em uma **queda no valor eficaz da tensão (Vrms)**.
+
+Na simulação atual, com o PWM ativo e um período de **16 ms**, a tensão eficaz medida na carga foi de aproximadamente **4.07 V**. Essa diferença ocorre devido ao tempo em que o sinal permanece em nível baixo durante o ciclo (tempo desligado), reduzindo a área sob a curva da tensão ao longo do tempo.
+
+Esse comportamento é esperado e está diretamente relacionado ao **fator de condução** (ou duty cycle) aplicado no PWM. Quanto menor o tempo em que o sinal permanece em nível alto (Ton), **menor será o valor eficaz da tensão** na carga.
+
+> Ou seja, a queda na Vrms é uma consequência natural e controlada do uso do PWM — técnica essencial para ajustar a potência fornecida à carga sem alterar a tensão da fonte.
 ---
 
 ## 🎛️ Controle PWM
@@ -38,7 +49,8 @@ Para controlar o inversor com PWM, utilizamos:
 - `Vp1` e `Vp2` são as portadoras (dente de serra), sendo `Vp2` o inverso de `Vp1`;
 - `Vc` é a tensão de controle (constante de 10 V).
 
-O comparador ativa sua saída sempre que `Vc` ultrapassa o valor instantâneo de `Vp1` ou `Vp2`.
+O comparador ativa sua saída sempre que `Vc` ultrapassa o valor instantâneo de `Vp1` ou `Vp2`. ?? 
+O comparador ativa sua saída sempre que o valor instantâneo de `Vp1` ou `Vp2` ultrapassa `Vc`  .??????
 
 ---
 
@@ -79,19 +91,6 @@ Esse componente serve para:
 
 O uso do buffer assegura que os sinais PWM cheguem aos transistores de forma estável e sem distorções.
 
-## 🔍 Queda na Tensão Efetiva (Vrms)
-
-No circuito anterior (sem controle PWM), a tensão eficaz na carga era aproximadamente **5 V**, valor esperado dada a fonte DC de **5 V** e o acionamento direto dos MOSFETs.
-
-Com a introdução do controle **PWM (Pulse Width Modulation)**, a forma de onda da tensão na carga deixou de ser constante e passou a ter pulsos periódicos. Isso significa que a energia média entregue à carga foi reduzida, refletindo diretamente em uma **queda no valor eficaz da tensão (Vrms)**.
-
-Na simulação atual, com o PWM ativo e um período de **16 ms**, a tensão eficaz medida na carga foi de aproximadamente **4.07 V**. Essa diferença ocorre devido ao tempo em que o sinal permanece em nível baixo durante o ciclo (tempo desligado), reduzindo a área sob a curva da tensão ao longo do tempo.
-
-Esse comportamento é esperado e está diretamente relacionado ao **fator de condução** (ou duty cycle) aplicado no PWM. Quanto menor o tempo em que o sinal permanece em nível alto (Ton), **menor será o valor eficaz da tensão** na carga.
-
-> Ou seja, a queda na Vrms é uma consequência natural e controlada do uso do PWM — técnica essencial para ajustar a potência fornecida à carga sem alterar a tensão da fonte.
-
-
 
 ## 📌 Observações
 
@@ -99,10 +98,6 @@ Esse comportamento é esperado e está diretamente relacionado ao **fator de con
 - Um valor maior de tempo "ligado" (maior duty cycle) resulta em maior tensão RMS na carga;
 - O circuito foi simulado utilizando LTspice com uma frequência de comutação de 50 Hz.
 
----
 
-## 📎 Conclusão
-
-O controle por PWM se mostrou eficaz para modular a tensão de saída do inversor monofásico. O circuito apresentado é uma base importante para o estudo de formas de onda, harmônicos e eficiência de conversão em inversores de potência.
 
 
