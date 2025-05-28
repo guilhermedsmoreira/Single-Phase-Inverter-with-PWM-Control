@@ -1,101 +1,119 @@
 # ⚡ Single-Phase Inverter with PWM Control
+[🔧 Under Load – Handle with Care!]
 
-Este projeto é uma continuação do estudo anterior sobre inversores monofásicos. Agora, o mesmo circuito H-Bridge será analisado com a adição do controle por modulação por largura de pulso (PWM).
-
----
-
-## 🔧 Componentes do Circuito
-
-O circuito é composto por:
-
-- 4 transistores MOSFET tipo N;
-- Fonte de tensão contínua de 5 V;
-- Carga resistiva de 10 kΩ;
-- Fontes de controle PWM;
-- Buffers e amplificadores operacionais.
-
-![Circuito completo](Circuit_complet.png)
+This project continues the previous study on single-phase inverters. Here, the same H-bridge circuit is analyzed with the addition of Pulse Width Modulation (PWM) control.
 
 ---
 
-## 📈 Forma de Onda da Carga
+## 🔧 Circuit Components
 
-A simulação foi feita no LTspice. Abaixo, é possível observar a forma de onda da tensão e corrente sobre a carga resistiva:
+The circuit includes:
 
-![Forma de onda da carga](Wave_load_voltage.png)
-![Forma de onda da carga](Wave_load_current.png)
+4 N-channel MOSFETs
 
+A 5 V DC power supply
 
-Podemos notar que tanto a onda de tensão e corrente possuem o mesmo formato justamente pela carga em análise ser puramente resistiva.
+A 10 kΩ resistive load
 
-No circuito anterior (sem controle PWM), a tensão eficaz na carga era aproximadamente **5 V**, valor esperado dada a fonte DC de **5 V** e o acionamento direto dos MOSFETs.
+PWM control voltage sources
 
-Com a introdução do controle **PWM (Pulse Width Modulation)**, a forma de onda da tensão na carga deixou de ser constante e passou a ter pulsos periódicos. Isso significa que a energia média entregue à carga foi reduzida, refletindo diretamente em uma **queda no valor eficaz da tensão (Vrms)**.
+Buffers and operational amplifiers
 
-Na simulação atual, a tensão eficaz medida na carga foi de aproximadamente **4.07 V**. Essa diferença ocorre devido ao tempo em que o sinal permanece em nível baixo durante o ciclo (tempo desligado), reduzindo a área sob a curva da tensão ao longo do tempo.
-
-Esse comportamento é esperado e está diretamente relacionado ao **fator de condução** (ou duty cycle) aplicado no PWM. Quanto menor o tempo em que o sinal permanece em nível alto (Ton), **menor será o valor eficaz da tensão** na carga.
-
-> Ou seja, a queda na Vrms é uma consequência natural e controlada do uso do PWM — técnica essencial para ajustar a potência fornecida à carga sem alterar a tensão da fonte.
----
-
-## 🎛️ Controle PWM
-
-Para controlar o inversor com PWM, utilizamos:
-
-- 2 comparadores;
-- 3 fontes de tensão: `Vp1`, `Vp2` e `Vc`.
-- `Vp1` e `Vp2` são as portadoras (dente de serra), sendo `Vp2` o inverso de `Vp1`;
-- `Vc` é a tensão de controle (constante de 10 V).
-
-O comparador ativa sua saída sempre que `Vc` ultrapassa o valor instantâneo de `Vp1` ou `Vp2`. ?? 
-O comparador ativa sua saída sempre que o valor instantâneo de `Vp1` ou `Vp2` ultrapassa `Vc`  .??????
+![Circuito completo]()
 
 ---
 
-## 🔁 Amplificador Operacional Inversor (Ganho Unitário)
+## 📈 Load Waveform
 
-Para garantir que `Vp1` e `Vp2` tenham o mesmo valor eficaz (Vrms), foi utilizado um amplificador operacional inversor com ganho unitário.
+The simulation was carried out in LTspice. Below, you can see the voltage and current waveforms across the resistive load:
 
-- Resistores utilizados: `R1 = R2 = 10 kΩ`.
-- Resultado: inversão da forma de onda sem alterar sua magnitude.
+![Forma de onda da carga]()
+![Forma de onda da carga]()
 
-![Amp Op inversor](Wave_Vp1_Vp2.png)
+
+Since the load is purely resistive, the voltage and current waveforms have the same shape.
+
+In the previous version (without PWM control), the RMS voltage across the load was approximately 5 V, as expected given the 5 V DC source and direct MOSFET switching.
+
+With the addition of Pulse Width Modulation (PWM) control, the output voltage waveform is no longer constant but composed of periodic pulses. This reduces the average energy delivered to the load, which results in a lower RMS voltage.
+
+In this simulation, the measured RMS voltage across the load is about 4.07 V. This reduction occurs because part of the PWM cycle is spent at low voltage, which decreases the total energy delivered over time.
+
+This behavior is expected and directly tied to the duty cycle of the PWM signal. The shorter the on-time (Ton), the lower the RMS voltage across the load.
+
+In other words, the drop in Vrms is a natural and controlled result of PWM — a key technique for regulating power delivered to the load without changing the DC source voltage.
+---
+
+## 🎛️ PWM Control
+
+To implement PWM control in the inverter, we used:
+
+2 comparators
+
+3 voltage sources: Vp1, Vp2, and Vc
+
+Vp1 and Vp2 are the carrier signals (sawtooth), with Vp2 being the inverted version of Vp1
+
+Vc is the control voltage (set at 10 V)
+
+The comparator switches its output high whenever Vc exceeds the instantaneous value of Vp1 or Vp2.
+
+This comparison process is what generates the PWM pulses used to drive the MOSFETs.
 
 ---
 
-## ⚖️ Amplificador Operacional Comparador
+## 🔁 Inverting Op-Amp (Unity Gain)
 
-A comparação entre `Vc` e as portadoras `Vp1` e `Vp2` é feita por meio de comparadores com amplificadores operacionais.
+To ensure Vp1 and Vp2 have the same RMS value, an inverting operational amplifier with unity gain was used.
 
-- Quando `Vc > Vp1` → saída do comparador é alta;
-- Quando `Vc < Vp1` → saída do comparador é baixa;
-- O mesmo ocorre com `Vp2`.
+Resistors used: R1 = R2 = 10 kΩ
 
-Este é o princípio da geração dos pulsos PWM utilizados para acionar os MOSFETs do inversor.
+Result: the waveform is inverted without any change in magnitude
 
-![Ondas Vp1, Vp2, Vc](Wave_Vp1_Vp2_Vc.png)
+![Amp Op inversor]()
 
 ---
 
-## 🧱 Buffer
+## ⚖️ Comparator with Op-Amp
 
-Foi utilizado um buffer (seguidor de tensão) na saída dos comparadores com o objetivo de garantir o isolamento e a integridade dos sinais antes de acionar os MOSFETs.
+PWM generation is based on comparing Vc with the carriers Vp1 and Vp2 using op-amp comparators.
 
-Esse componente serve para:
+When Vc > Vp1 → comparator output is HIGH
 
-- Evitar que o circuito de controle seja afetado pela carga dos MOSFETs;
-- Preservar a forma do sinal de controle;
-- Proporcionar **alta impedância de entrada** e **baixa impedância de saída**, características fundamentais para acoplamento eficiente entre estágios.
+When Vc < Vp1 → comparator output is LOW
 
-O uso do buffer assegura que os sinais PWM cheguem aos transistores de forma estável e sem distorções.
+The same logic applies to Vp2
+
+This is the fundamental process behind PWM pulse generation for switching the MOSFETs.
+
+![Ondas Vp1, Vp2, Vc]()
+
+---
+
+## 🧱 Buffer Stage
+
+A voltage follower (buffer) was added at the comparator output to ensure proper signal isolation and integrity before reaching the MOSFET gates.
+
+The buffer serves to:
+
+Prevent the control circuit from being affected by the MOSFET gate load
+
+Preserve the PWM signal shape
+
+Provide high input impedance and low output impedance, ensuring efficient coupling between stages
+
+Using a buffer guarantees that PWM signals arrive at the transistors cleanly and without distortion.
 
 
-## 📌 Observações
+## 📌 Key Takeaways
 
-- O uso da técnica PWM permite controlar a tensão RMS na carga variando o tempo de condução dos MOSFETs;
-- Um valor maior de tempo "ligado" (maior duty cycle) resulta em maior tensão RMS na carga;
-- O circuito foi simulado utilizando LTspice com uma frequência de comutação de 50 Hz.
+PWM allows control over the RMS voltage across the load by varying the MOSFET conduction time
+
+A higher duty cycle leads to a higher RMS voltage
+
+The circuit was simulated in LTspice using a 50 Hz switching frequency
+
+
 
 
 
